@@ -14,20 +14,24 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class WordCount {
 
   public static class TokenizerMapper
-       extends Mapper<Object, Text, Text, IntWritable>{
-
-    private final static IntWritable one = new IntWritable(1);
-    private Text word = new Text();
-
-    public void map(Object key, Text value, Context context
-                    ) throws IOException, InterruptedException {
-      StringTokenizer itr = new StringTokenizer(value.toString());
-      while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken());
-        context.write(word, one);
+         extends Mapper<Object, Text, Text, IntWritable> {
+  
+      private final static IntWritable one = new IntWritable(1);
+      private Text word = new Text();
+  
+      public void map(Object key, Text value, Context context
+                      ) throws IOException, InterruptedException {
+          // Use regular expression to replace punctuation
+          String cleanLine = value.toString().replaceAll("[^a-zA-Z0-9\\s]", "");
+          
+          StringTokenizer itr = new StringTokenizer(cleanLine);
+          while (itr.hasMoreTokens()) {
+              word.set(itr.nextToken());
+              context.write(word, one);
+          }
       }
-    }
   }
+
 
   public static class IntSumReducer
        extends Reducer<Text,IntWritable,Text,IntWritable> {
