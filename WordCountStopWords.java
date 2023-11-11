@@ -33,9 +33,13 @@ public class WordCountStopWords {
         StringTokenizer itr = new StringTokenizer(value.toString());
         while (itr.hasMoreTokens()) {
             String currentWord = itr.nextToken().toLowerCase();
+            // Logging for debugging
+            System.out.println("Processing Word: " + currentWord);
             if (!stopWords.contains(currentWord)) {
                 word.set(currentWord);
                 context.write(word, one);
+            } else {
+                System.out.println("Skipping Stop Word: " + currentWord);
             }
         }
     }
@@ -71,4 +75,5 @@ public class WordCountStopWords {
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
     System.exit(job.waitForCompletion(true) ? 0 : 1);
- 
+  }
+}
